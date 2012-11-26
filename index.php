@@ -1,6 +1,6 @@
 <?php 
 
-require_once("srplaylist/classes/SRplaylist.php");
+require_once("api/classes/SRplaylist.php");
 
 $api = new SRplaylist("localhost", "root", "root", "Tracks");
 
