@@ -12,3 +12,5 @@ SRplaylist kommer i dagsläget med två metoder, en för att hämta kanaler och 
 ### Användning och metoder
 #### getPlaylist()
 Hämtar en spellista för en kanal som innehåller information om kanalen i sig samt titel och artist på låt som spelas just nu och för nästkommande låt.
+__Tillåtna inparametrar__
+Till getPlaylist() kan man skicka med ett namn på en kanal. Parametern måste vara en [giltig kanal](http://sverigesradio.se/sida/allakanaler.aspx) från Sveriges radio. Om en parameter inte skickas med används kanalen P3 som default.
