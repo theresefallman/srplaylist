@@ -13,6 +13,28 @@ SRplaylist kommer i dagsläget med två metoder, en för att hämta kanaler och 
 #### getPlaylist()
 Hämtar en spellista för en kanal som innehåller information om kanalen i sig samt titel och artist på låt som spelas just nu och för nästkommande låt.
 
-__Tillåtna inparametrar__
-
+##### Tillåtna inparametrar
 Till getPlaylist() kan man skicka med ett namn på en kanal. Parametern måste vara en [giltig kanal](http://sverigesradio.se/sida/allakanaler.aspx) från Sveriges radio. Om en parameter inte skickas med används kanalen P3 som default.
+
+##### Returnerad data
+
+	{
+	  "channelInfo":
+		{
+		  "channel_id": "164",
+		  "name": "P3",
+		  "audio_url": "http://sverigesradio.se/topsy/direkt/164.mp3",
+		  "channel_url": "http://sverigesradio.se/p3"
+		},
+	  "playlist": {
+			"currentSong": {
+			  "title": "Adorn",
+			  "artist": "Miguel"
+			},
+			"nextSong": {
+			  "title": "Troublemaker",
+			  "artist": "Olly Murs & Flo Rida"
+			}
+		}
+	}
+
