@@ -5,7 +5,7 @@ require_once(__DIR__ . "/../config/database.php");
 
 class SRplaylist {
 	
-	// Time-to-live (apc) -- Todo: parameter?
+	// Time-to-live (apc) -- TODO: inparameter?
 	const APCTTL = 30;
 	const PLAYLIST = "playlist";
 	
@@ -49,8 +49,6 @@ class SRplaylist {
 		} else {
 			$result = array("error" => "The requested resource doesn't exist.");
 		}
-		
-		// TODO returnera tom array?
 		
 		return json_encode($result);
 	}
