@@ -83,7 +83,7 @@ För att använda api:et inkludera följande: `require_once("api/classes/SRplayl
 Om den parameter som skickas med inte finns kommer ett kort felmeddelande i formatet JSON returneras. För eventuella databasfel kastas dock undantag. Återigen, observera att ett anrop i nuläget kan returnera null-värden för spellistan.
 	
 	{
-		"message": "The requested resource does not exist."
+		"error": "The requested resource does not exist."
 	}
 	
 ## Om 
