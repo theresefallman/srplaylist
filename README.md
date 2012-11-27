@@ -19,7 +19,7 @@ SRplaylist kommer i dagsläget med två metoder, en för att hämta kanaler och 
 Hämtar en spellista för en kanal som innehåller information om kanalen i sig samt titel och artist på låt som spelas just nu och för nästkommande låt.
 
 #### Tillåtna inparametrar
-Till getPlaylist() kan man skicka med ett namn på en kanal. Parametern måste vara en [giltig kanal](http://sverigesradio.se/sida/allakanaler.aspx) från Sveriges radio. Om en parameter inte skickas med används kanalen P3 som default.
+Till getPlaylist() kan man skicka med ett namn på en kanal. Parametern ska vara en sträng och måste vara en [giltig kanal](http://sverigesradio.se/sida/allakanaler.aspx) från Sveriges Radio. Om en parameter inte skickas med används kanalen P3 som default.
 
 #### Returnerad data
 Nedan visas ett exempel på hur ett svar från metoden kan se ut. Vid lyckat anrop kommer alltid information om kanalen med till exempel url för ljud, att returneras. Observera att api:et kan returnera null-värden för nuvarande låt eller nästkommande låt, ibland båda. Det beror helt på om det faktiskt spelas låtar på den kanalen just då.
@@ -61,7 +61,7 @@ Ett lyckat anrop returnerar kort information om alla kanaler och inkluderar kana
 	}
 	
 ## Användning
-För att använda api:et inkludera följande: `require_once("api/classes/SRplaylist.php")`. SRplaylist behöver tillgång till en MySQL-databas, vilket innebär att databasuppgifter måste skickas med vid skapande av instans till klassen. Api:et skapar själv de tabeller som behövs.
+För att använda api:et inkludera följande: `require_once("api/classes/SRplaylist.php")`. SRplaylist behöver tillgång till en MySQL-databas, vilket innebär att databasuppgifter måste skickas med vid skapande av instans till klassen. Api:et skapar själv de tabeller som behövs. Kanaler hämtas om till databasen en gång per dygn och låtlistor cachas med APC i 30 sekunder.
 
 	<?php 
 	
@@ -75,7 +75,7 @@ För att använda api:et inkludera följande: `require_once("api/classes/SRplayl
 		$channel = $output->channelInfo[0];
 		$playlist = $output->playlist[0];
 				
-		echo "På " . $channel->name . " spells just nu "  . $playlist->currentSong->title . " av ". $playlist->currentSong->artist . ".";
+		echo "På " . $channel->name . " spelas just nu "  . $playlist->currentSong->title . " av ". $playlist->currentSong->artist . ".";
 	
 	?>
 	

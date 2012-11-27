@@ -1,12 +1,19 @@
 <?php 
+/*
+*	Example file for using SRplaylist-api
+*/
 
 require_once("api/classes/SRplaylist.php");
 
-$api = new SRplaylist("localhost", "root", "root", "Tracks");
+$api = new SRplaylist("localhost", "root", "root", "sr_playlist");
 
-// Default is "P3"
-$playlist = $api->getPlaylist();
+$result = $api->getPlaylist("P3");
 
-echo $playlist;
+$output = json_decode($result);
+$channel = $output->channelInfo[0];
+$playlist = $output->playlist[0];
+
+
+echo "På " . $channel->name . " spelas just nu "  . $playlist->currentSong->title . " av ". $playlist->currentSong->artist . ".";
 
 ?>

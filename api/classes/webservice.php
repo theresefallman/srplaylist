@@ -2,15 +2,15 @@
 
 class Webservice {
 
-	// Constants for URI to SR.se
+	// Constants for URI to sr.se/api/v2
 	const BASEURL = "http://sverigesradio.se/api/v2";
 	const CHANNELURL = "/channels?pagination=false";
 	const TRACKSURL = "/playlists/rightnow?channelid="; 
 	
-	/***************************
-	Function that requests all channels from sverigesradio.se/api/v2/
-	@return array[] with channel info extracted from request
-	***************************/
+	/*
+	*	Function that requests all channels from sverigesradio.se/api/v2/
+	*	@return array[]: channels (success), message (failure)
+	*/
 	public function findChannels() {
 		
 		$output = $this->_processRequest(self::BASEURL . self::CHANNELURL);
@@ -26,17 +26,17 @@ class Webservice {
 				$result[] = $value;
 			}
 		} else {
-			$result = array("message" => "Error requesting data from sverigesradio.se/api");
+			$result = array("error" => "Error requesting data from sverigesradio.se/api");
 		}
 
 		return $result;
 	}
 
-	/***************************
-	Function that requests tracks from sverigesradio.se/api/v2/ based on channel id 
-	@param int valid channel id
-	@return array[] with playlist for channel
-	***************************/
+	/*
+	*	Requests playlist from sverigesradio.se/api/v2/ based on channel id 
+	*	@param int: valid channel id
+	*	@return array[]: playlist (success), message (failure)
+	*/
 	public function findPlaylist($channel_id = 0) {
 		
 		$requestUriTracks = self::BASEURL . self::TRACKSURL . $channel_id;
@@ -60,17 +60,17 @@ class Webservice {
 			);
 			
 		} else {
-			$result = array("message" => "Error requesting data from sverigesradio.se/api");
+			$result = array("error" => "Error requesting data from sverigesradio.se/api");
 		}
 	
 		return $result;		
 	}
 
-	/***************************
-	Private function for processing request and sets up cURL
-	@param string url for request path
-	@return XML-output
-	***************************/
+	/*
+	* 	Private function for processing request and sets up cURL
+	* 	@param string: url for request path
+	*	@return XML-output
+	*/
 	private function _processRequest($uri) {
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Accept' => 'text/xml; charset=utf-8'));
@@ -82,6 +82,7 @@ class Webservice {
 		
 		curl_close($ch);
 		
+		// Returns results only if http-status is 200
 		if ($status == "200") {
 			return $result;
 		} else {

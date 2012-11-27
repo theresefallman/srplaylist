@@ -24,9 +24,9 @@ class Database {
 		$this->_setup();
 	}	
 		
-	/***************************
-	Function for creating a new PDO setup - connects to database
-	***************************/
+	/*
+	*	Function for creating a new PDO setup - connects to database
+	*/
 	public function create() {
 		try
 		{
@@ -44,11 +44,11 @@ class Database {
 		}
 	}
 	
-	/***************************
-	Function for preparing statements
-	@param string sql-query
-	@return Statement object or false
-	***************************/
+	/*
+	*	Function for preparing statements
+	*	@param string: SQL
+	*	@return Statement object or false
+	*/
 	public function prepare($sql) {
 		
 		$stmt = $this->_pdo->prepare($sql);
@@ -60,11 +60,11 @@ class Database {
 		return $stmt;
 	}
 	
-	/***************************
-	Execute statements
-	@param string sql-query (required), array with parameters (optional)
-	@return boolean
-	***************************/
+	/*
+	*	Execute statements
+	*	@param string: SQL (required), array with parameters (optional)
+	*	@return boolean
+	*/
 	public function runAndPrepare($sql, $params = null) {
 		$stmt = $this->prepare($sql);
 						
@@ -83,11 +83,11 @@ class Database {
 		}
 	}
 	
-	/***************************
-	Execute statements and fetch result
-	@param string sql-query
-	@return array[] with selected values
-	***************************/
+	/*
+	*	Execute statements and fetch result
+	*	@param string: SQL
+	*	@return array[] with selected values
+	*/
 	public function runAndFetch($sql) {
 		$stmt = $this->prepare($sql);
 		$result = array();
@@ -107,10 +107,10 @@ class Database {
 	}
 	
 
-	/***************************
-	Sets up a needed tables, if they doesn't exist.
-	@return boolean value 
-	***************************/
+	/*
+	*	Sets up a needed tables, if they doesn't exist.
+	*	@return boolean value 
+	*/
 	private function _setup() {
 		
 		if ($this->tableExist($this->_table) == null) {
@@ -132,20 +132,25 @@ class Database {
 				id int NOT NULL AUTO_INCREMENT,
 				ttl DATETIME NOT NULL,
 				PRIMARY KEY (id))";
+				
 			$this->runAndPrepare($sql);
+			
+			$dateNow = date("Y-m-d H:i:s");
+			$ttl = date("Y-m-d H:i:s", strtotime($dateNow . "+ 24 hours"));
+			$sql2 = "INSERT INTO $this->_tableUpdate (ttl) VALUES ('$ttl')";
+			$this->runAndPrepare($sql2);
 		}
 	}
 	
-	/***************************
-	Private function that checks if table already exists.
-	@param string name on table to check
-	@return array[]  
-	***************************/
+	/*
+	*	Private function that checks if table already exists.
+	*	@param string: name on table to check
+	*	@return array[]  
+	*/
 	private function tableExist($tableName) {
 		$sql = "SHOW TABLES LIKE '$tableName';";
 		return $this->runAndFetch($sql);
-	}
-	
+	}	
 }
 
 ?>

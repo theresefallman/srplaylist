@@ -50,7 +50,7 @@ class TestNextTrack extends UnitTestCase {
 	// 	$this->assertTrue($json);
 	// 	$this->assertFalse(empty($json));
 	// 	$this->assertTrue(is_array($json));
-	// 	$this->assertTrue($json["message"] == "The requested resource doesn't exist.");
+	// 	$this->assertTrue($json["error"] == "The requested resource doesn't exist.");
 	// 
 	// }
 	

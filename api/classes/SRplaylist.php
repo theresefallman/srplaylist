@@ -5,12 +5,15 @@ require_once(__DIR__ . "/../config/database.php");
 
 class SRplaylist {
 	
-	const PLAYLIST = "playlist";
+	// Time-to-live (apc) -- Todo: parameter?
 	const APCTTL = 30;
+	const PLAYLIST = "playlist";
 	
 	private $_webservice = null;
 	private $_database = null;
 	private $_apcTtl = null;
+	
+	// Table names in MySQL-database
 	private $_table = "sr_channels";
 	private $_lastUpdate = "sr_update";
 	
@@ -19,6 +22,12 @@ class SRplaylist {
 		$this->_webservice = new Webservice();
 	}
 	
+	/*
+	*	Core function - gets channelinfo and playlist
+	*	Stores playlist in apc-cache
+	*	@param string: channel name (default is 'P3')
+	*	@return json: includes playlist and channel
+	*/	
 	public function getPlaylist($name = "P3") {
 		$result = array();
 		$channel = $this->_getChannel($name);
@@ -38,17 +47,24 @@ class SRplaylist {
 				$this->_setCache(self::PLAYLIST . $id, $result);
 			}
 		} else {
-			$result = array("message" => "The requested resource doesn't exist.");
+			$result = array("error" => "The requested resource doesn't exist.");
 		}
+		
+		// TODO returnera tom array?
 		
 		return json_encode($result);
 	}
 	
+	/*
+	*	Returns all channels from database
+	*	Updates database if empty or < last update
+	*	@return json: all channels
+	*/
 	public function getAllChannels() {
 		$sql = "SELECT channel_id, name, audio_url, channel_url FROM $this->_table";
 		
 		$channels = $this->_database->runAndFetch($sql);
-	
+
 		if (empty($channels) || $this->_lastUpdate() == true) {
 			$channels = $this->_refreshDatabase();
 		}
@@ -57,7 +73,12 @@ class SRplaylist {
 
 	}
 	
-	// TODO : Check if name exist in webservice
+	/*
+	*	Gets channel info based on name
+	*	@param string: channel name
+	*	@return array: channel info for specific channel
+	*	TODO: Check if name exist in webservice 
+	*/
 	private function _getChannel($name) {
 		
 		$sql = "SELECT channel_id, name, audio_url, channel_url FROM $this->_table WHERE name='$name';";
@@ -74,11 +95,16 @@ class SRplaylist {
 		return $channelInfo;		
 	}
 	
+	/*
+	*	Updates channels in database
+	*	@param string: channel name (optional)
+	*	@return array[]: all channels or specific channel
+	*/
 	private function _refreshDatabase($name = null) {
-		
 		$this->_database->runAndPrepare("DELETE FROM $this->_table");
 		$channels = $this->_webservice->findChannels();
 		
+		// Loops through array from data source and insert in database
 		for ($i = 0; $i < sizeof($channels); $i++) {
 			
 			$params = array(
@@ -88,7 +114,8 @@ class SRplaylist {
 				":channelurl" => $channels[$i]->siteurl,
 			);
 			
-			$sql = "INSERT INTO $this->_table (channel_id, name, audio_url, channel_url) VALUES(:channelid, :name, :audiourl, :channelurl)";
+			$sql = "INSERT INTO $this->_table (channel_id, name, audio_url, channel_url) 
+							VALUES(:channelid, :name, :audiourl, :channelurl)";
 			$this->_database->runAndPrepare($sql, $params);			
 		}
 		
@@ -99,16 +126,31 @@ class SRplaylist {
 		}
 	}
 	
+	/*
+	*	Gets playlist stored in cache
+	*	@param string: identification key
+	*	@return array[]/null
+	*/
 	private function _getCache($key) {
 		$result = false;
 		$data = apc_fetch($key, $result);
 		return ($result) ? $data : null;	
 	}
 	
+	/*
+	*	Stores result-array in cache
+	*	@param string, array: id, playlist
+	*	@return boolean
+	*/
 	private function _setCache($key, $data) {
 		return apc_store($key, $data, self::APCTTL);
 	}
 	
+	/*
+	*	Updates table for "time-to-live"
+	*	@return boolean
+	*	Todo: Make ttl-time an option for user (24 hours)
+	*/
 	private function _lastUpdate() {
 		$dateNow = date("Y-m-d H:i:s");
 		$ttl = date("Y-m-d H:i:s", strtotime($dateNow . "+ 24 hours"));
