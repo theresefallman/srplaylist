@@ -121,6 +121,7 @@ class Database {
 				name varchar(255) NOT NULL,
 				audio_url varchar(255) NOT NULL,
 				channel_url varchar(255) NOT NULL,
+				image varchar(255),
 				PRIMARY KEY (id),
 				KEY name (name))";
 				

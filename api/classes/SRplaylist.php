@@ -59,7 +59,7 @@ class SRplaylist {
 	*	@return json: all channels
 	*/
 	public function getAllChannels() {
-		$sql = "SELECT channel_id, name, audio_url, channel_url FROM $this->_table";
+		$sql = "SELECT channel_id, name, audio_url, channel_url, image FROM $this->_table";
 		
 		$channels = $this->_database->runAndFetch($sql);
 
@@ -79,7 +79,7 @@ class SRplaylist {
 	*/
 	private function _getChannel($name) {
 		
-		$sql = "SELECT channel_id, name, audio_url, channel_url FROM $this->_table WHERE name='$name';";
+		$sql = "SELECT channel_id, name, audio_url, channel_url, image FROM $this->_table WHERE name='$name';";
 		$channelInfo = $this->_database->runAndFetch($sql);
 		
 		if (empty($channelInfo) || $this->_lastUpdate() == true) {
@@ -110,17 +110,19 @@ class SRplaylist {
 				":name" => $channels[$i]["name"],
 				":audiourl" => $channels[$i]->liveaudio->url,
 				":channelurl" => $channels[$i]->siteurl,
+				":image" => $channels[$i]->image
 			);
 			
-			$sql = "INSERT INTO $this->_table (channel_id, name, audio_url, channel_url) 
-							VALUES(:channelid, :name, :audiourl, :channelurl)";
+			$sql = "INSERT INTO $this->_table (channel_id, name, audio_url, channel_url, image) 
+							VALUES(:channelid, :name, :audiourl, :channelurl, :image)";
 			$this->_database->runAndPrepare($sql, $params);			
 		}
 		
 		if ($name == null) {
-			return $this->_database->runAndFetch("SELECT channel_id, name, audio_url, channel_url FROM $this->_table");
+			return $this->_database->runAndFetch("SELECT channel_id, name, audio_url, channel_url, image FROM $this->_table");
 		} else {
-			return $this->_database->runAndFetch("SELECT channel_id, name, audio_url, channel_url FROM $this->_table WHERE name='$name';");
+			return $this->_database->runAndFetch("SELECT channel_id, name, audio_url, channel_url, image 
+				FROM $this->_table WHERE name='$name';");
 		}
 	}
 	
